@@ -24,8 +24,17 @@ struct HomeView: View {
                         ForEach(model.modules) { module in
                             VStack(spacing:20) {
                                 
-                                // Learning card
-                                HomeViewRow(imageName: module.content.image, title: "Learn \(module.category)", description: module.content.description, count: "\(module.content.lessons.count) Lessons", time: module.content.time)
+                                NavigationLink(
+                                    destination:
+                                        ContentView(module: module)
+                                        .onAppear(perform: {
+                                            model.beginModule(module.id)
+                                            }),
+                                    label: {
+                                        // Learning card
+                                        HomeViewRow(imageName: module.content.image, title: "Learn \(module.category)", description: module.content.description, count: "\(module.content.lessons.count) Lessons", time: module.content.time)
+                                    })
+                                
                                 
                                 // Test card
                                 HomeViewRow(imageName: module.test.image, title: "\(module.category) Test", description: module.test.description, count: "\(module.test.questions.count) Questions", time: module.test.time)
@@ -33,6 +42,7 @@ struct HomeView: View {
                         }
                     }.padding()
                 }
+                .accentColor(.black)
             }.navigationTitle("Get Started")
         }
     }

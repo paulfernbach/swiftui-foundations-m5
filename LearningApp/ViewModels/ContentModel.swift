@@ -12,6 +12,9 @@ class ContentModel: ObservableObject {
     @Published var modules = [Module]()
     var styleData: Data?
     
+    @Published var currentModule: Module?
+    var currentModuleIndex = 0
+    
     init() {
         getLocalData()
     }
@@ -52,5 +55,18 @@ class ContentModel: ObservableObject {
         } catch {
             print ("Couldn't parse style data!")
         }
+    }
+    
+    // MARK: data setters
+    func beginModule(_ moduleid:Int) {
+        
+        for index in 0..<modules.count {
+            if modules[index].id == moduleid {
+                currentModuleIndex = index
+                break
+            }
+        }
+        
+        currentModule = modules[currentModuleIndex]
     }
 }
