@@ -45,6 +45,7 @@ struct HomeView: View {
                 .accentColor(.black)
             }.navigationTitle("Get Started")
         }
+        .navigationViewStyle(.stack)
     }
 }
 
