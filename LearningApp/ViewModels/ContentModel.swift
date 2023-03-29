@@ -18,11 +18,16 @@ class ContentModel: ObservableObject {
     @Published var currentLesson: Lesson?
     var currentLessonIndex = 0
     
+    // Current Question
+    @Published var currentQuestion: Question?
+    var currentQuestionIndex = 0
+    
     // Current lesson explanation
     @Published var lessonDescription = NSAttributedString()
 
     // current selected content and test
     @Published var currentContentSelected:Int?
+    @Published var currentTestSelected:Int?
     
     var styleData: Data?
 
@@ -113,6 +118,21 @@ class ContentModel: ObservableObject {
     //MARK: is there a next lesson
     func hasNextLesson() -> Bool {
         return (currentLessonIndex + 1 < currentModule!.content.lessons.count)
+    }
+    
+    // MARK: begin Test
+    func beginTest(_ moduleId:Int) {
+        // set the current module
+        beginModule(moduleId)
+        
+        // set the current question
+        currentQuestionIndex = 0
+        if currentModule?.test.questions.count ?? 0 > 0 {
+            currentQuestion = currentModule!.test.questions[currentQuestionIndex]
+            
+            // set the question content
+            lessonDescription = addStyling(currentQuestion?.content ?? "")
+        }
     }
     
     //MARK: code styling helper
