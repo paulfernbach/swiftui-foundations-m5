@@ -10,7 +10,6 @@ import Foundation
 class ContentModel: ObservableObject {
     
     @Published var modules = [Module]()
-    var styleData: Data?
     
     @Published var currentModule: Module?
     var currentModuleIndex = 0
@@ -19,6 +18,14 @@ class ContentModel: ObservableObject {
     @Published var currentLesson: Lesson?
     var currentLessonIndex = 0
     
+    // Current lesson explanation
+    @Published var lessonDescription = NSAttributedString()
+
+    // current selected content and test
+    @Published var currentContentSelected:Int?
+    
+    var styleData: Data?
+
     init() {
         getLocalData()
     }
@@ -85,6 +92,7 @@ class ContentModel: ObservableObject {
         
         // set the current lesson
         currentLesson = currentModule?.content.lessons[currentLessonIndex]
+        lessonDescription = addStyling(currentLesson!.explanation)
     }
     
     //
@@ -95,6 +103,7 @@ class ContentModel: ObservableObject {
         // Check that it is within range
         if currentLessonIndex < currentModule!.content.lessons.count {
             currentLesson = currentModule!.content.lessons[currentLessonIndex]
+            lessonDescription = addStyling(currentLesson!.explanation)
         } else {
             currentLessonIndex = 0
             currentLesson = nil
@@ -104,5 +113,29 @@ class ContentModel: ObservableObject {
     //MARK: is there a next lesson
     func hasNextLesson() -> Bool {
         return (currentLessonIndex + 1 < currentModule!.content.lessons.count)
+    }
+    
+    //MARK: code styling helper
+    private func addStyling(_ htmlString:String) -> NSAttributedString {
+        var resultString = NSAttributedString()
+        var data = Data()
+        
+        // Add the styling
+        if styleData != nil {
+            data.append(styleData!)
+        }
+        
+        //
+        data.append(Data(htmlString.utf8))
+        
+        //
+        do {
+            let attributeString = try NSAttributedString(data: data, options: [.documentType:                                                                    NSAttributedString.DocumentType.html], documentAttributes: nil)
+                resultString = attributeString
+        } catch {
+            print("Couldn't turn Style HTML into attributed string")
+        }
+        
+        return resultString
     }
 }
