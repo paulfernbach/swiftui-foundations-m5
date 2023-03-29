@@ -10,9 +10,20 @@ import SwiftUI
 struct TestView: View {
     
     @EnvironmentObject var model:ContentModel
-    @State var selectedAnswerIndex = -1
+    @State var selectedAnswerIndex:Int?
     @State var submitted = false
     @State var numCorrect = 0
+    
+    var submitButtonText: String {
+        if submitted {
+            if model.currentQuestionIndex + 1 == model.currentModule!.test.questions.count {
+                return "Finish"
+            }
+            return "Next"
+        } else {
+            return "Submit"
+        }
+    }
     
     var body: some View {
         if model.currentQuestion != nil {
@@ -68,23 +79,35 @@ struct TestView: View {
                     .accentColor(.black)
                     .padding()
                 }
-                // button
+                // submit button
                 Button {
-                    submitted = true
-                    if selectedAnswerIndex == model.currentQuestion!.correctIndex {
-                        numCorrect += 1
+                    if submitted == true {
+                        model.nextQuestion()
+                        submitted = false
+                        selectedAnswerIndex = nil
+                        
+                        
+                    } else {
+                        // submit the question
+                        // remember submitted
+                        submitted = true
+                        
+                        // check if correct
+                        if selectedAnswerIndex == model.currentQuestion!.correctIndex {
+                            numCorrect += 1
+                        }
                     }
                 } label: {
                     ZStack {
                         RectangleCard(color: .green)
                             .frame(height:48)
-                        Text("Submit")
+                        Text(submitButtonText)
                             .foregroundColor(.white)
                             .bold()
                     }
                     .padding()
                 }
-                .disabled(submitted)
+                .disabled(submitted == nil)
             }
             .navigationBarTitle("Learn \(model.currentModule?.category ?? "") Test")
         } else {
@@ -95,8 +118,3 @@ struct TestView: View {
     }
 }
 
-struct TestView_Previews: PreviewProvider {
-    static var previews: some View {
-        TestView()
-    }
-}
