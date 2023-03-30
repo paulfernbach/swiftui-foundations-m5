@@ -15,8 +15,9 @@ struct TestView: View {
     @State var numCorrect = 0
     
     var submitButtonText: String {
+        print ("current: \(model.currentQuestionIndex) model: \(model.currentModule!.test.questions.count) submitted: \(submitted)")
         if submitted {
-            if model.currentQuestionIndex + 1 == model.currentModule!.test.questions.count {
+            if model.currentQuestionIndex + 1 >= model.currentModule!.test.questions.count {
                 return "Finish"
             }
             return "Next"
@@ -107,12 +108,14 @@ struct TestView: View {
                     }
                     .padding()
                 }
-                .disabled(submitted == nil)
+                .disabled(selectedAnswerIndex == nil)
             }
             .navigationBarTitle("Learn \(model.currentModule?.category ?? "") Test")
-        } else {
+        }
+        else {
             // test hasn't loaded yet
-            ProgressView()
+            //ProgressView()
+            TestResultView(numCorrect: numCorrect)
         }
             
     }

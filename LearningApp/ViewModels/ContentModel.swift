@@ -23,7 +23,7 @@ class ContentModel: ObservableObject {
     var currentQuestionIndex = 0
     
     // Current lesson explanation
-    @Published var lessonDescription = NSAttributedString()
+    @Published var codeText = NSAttributedString()
 
     // current selected content and test
     @Published var currentContentSelected:Int?
@@ -97,7 +97,7 @@ class ContentModel: ObservableObject {
         
         // set the current lesson
         currentLesson = currentModule?.content.lessons[currentLessonIndex]
-        lessonDescription = addStyling(currentLesson!.explanation)
+        codeText = addStyling(currentLesson!.explanation)
     }
     
     //
@@ -108,7 +108,7 @@ class ContentModel: ObservableObject {
         // Check that it is within range
         if currentLessonIndex < currentModule!.content.lessons.count {
             currentLesson = currentModule!.content.lessons[currentLessonIndex]
-            lessonDescription = addStyling(currentLesson!.explanation)
+            codeText = addStyling(currentLesson!.explanation)
         } else {
             currentLessonIndex = 0
             currentLesson = nil
@@ -131,7 +131,7 @@ class ContentModel: ObservableObject {
             currentQuestion = currentModule!.test.questions[currentQuestionIndex]
             
             // set the question content
-            lessonDescription = addStyling(currentQuestion?.content ?? "")
+            codeText = addStyling(currentQuestion?.content ?? "")
         }
     }
     
@@ -143,11 +143,11 @@ class ContentModel: ObservableObject {
         // check that the question index is ok
         if currentQuestionIndex < currentModule!.test.questions.count {
             currentQuestion = currentModule!.test.questions[currentQuestionIndex]
-            lessonDescription = addStyling(currentQuestion!.content)
+            codeText = addStyling(currentQuestion!.content)
         } else {
             // if not then reset the question index
-            currentLessonIndex = 0
-            currentLesson = nil
+            currentQuestionIndex = 0
+            currentQuestion = nil
         }
         
     }
