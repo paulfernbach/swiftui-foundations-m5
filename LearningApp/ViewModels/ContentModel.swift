@@ -7,6 +7,8 @@
 
 import Foundation
 
+let remoteData = "https://paulfernbach.github.io/learningapp-data/data2.json"
+
 class ContentModel: ObservableObject {
     
     @Published var modules = [Module]()
@@ -33,6 +35,7 @@ class ContentModel: ObservableObject {
 
     init() {
         getLocalData()
+        getRemoteData()
     }
     
     func getLocalData() {
@@ -71,6 +74,49 @@ class ContentModel: ObservableObject {
         } catch {
             print ("Couldn't parse style data!")
         }
+    }
+    
+    func getRemoteData() {
+        // string path
+        let urlString = remoteData
+        
+        let url = URL(string: urlString)
+        
+        guard url != nil else {
+            return
+        }
+        
+        // Create a URL Request object
+        let request = URLRequest(url: url!)
+        
+        // get the session
+        let session = URLSession.shared
+        
+        // kick off the task
+        let dataTask = session.dataTask(with: request) { (data, response, error) in
+            // check if there is an error
+            guard error == nil else {
+                return
+            }
+            
+             do {
+                 // create json decoder
+                 let decoder = JSONDecoder()
+                 
+                 // and decode
+                 let modules = try decoder.decode([Module].self, from: data!)
+                 
+                 // apppend modules
+                 self.modules += modules
+                 
+            } catch {
+                print (error)
+            }
+        }
+        
+        // kick off data task
+        dataTask.resume()
+        
     }
     
     // MARK: data setters
